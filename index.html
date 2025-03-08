@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Savings Goal Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .result { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>Savings Goal Calculator</h2>
+    <form id="calcForm" onsubmit="calculateSavings(event)">
+        <label>Savings Goal ($): </label><br>
+        <input type="number" id="goal" step="0.01" min="0" required><br><br>
+        
+        <label>Time to Reach Goal (years): </label><br>
+        <input type="number" id="years" step="0.1" min="0" required><br><br>
+        
+        <label>Annual Interest Rate (%): </label><br>
+        <input type="number" id="rate" step="0.01" min="0" required><br><br>
+        
+        <button type="submit">Calculate</button>
+    </form>
+    <div id="result" class="result"></div>
+
+    <script>
+        function calculateSavings(event) {
+            event.preventDefault(); // Prevent form submission
+            
+            // Get input values
+            const goal = parseFloat(document.getElementById("goal").value);
+            const years = parseFloat(document.getElementById("years").value);
+            const rate = parseFloat(document.getElementById("rate").value);
+            
+            // Validate inputs
+            if (goal <= 0 || years <= 0 || rate < 0) {
+                document.getElementById("result").innerHTML = "Please enter positive values.";
+                return;
+            }
+            
+            // Calculate
+            const months = years * 12;
+            const monthlyRate = (rate / 100) / 12;
+            let monthlySavings;
+            if (monthlyRate === 0) {
+                monthlySavings = goal / months;
+            } else {
+                monthlySavings = (goal * monthlyRate) / (Math.pow(1 + monthlyRate, months) - 1);
+            }
+            const totalContributions = monthlySavings * months;
+            
+            // Display results
+            document.getElementById("result").innerHTML = `
+                Monthly Savings Needed: $${monthlySavings.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}<br>
+                Total Contributions: $${totalContributions.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}
+            `;
+        }
+    </script>
+</body>
+</html>
